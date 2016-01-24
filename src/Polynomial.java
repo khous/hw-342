@@ -1,4 +1,3 @@
-import java.util.Iterator;
 import java.util.Stack;
 
 /**
@@ -7,10 +6,10 @@ import java.util.Stack;
  */
 public class Polynomial {
 
-    LinkedList myPolynomial;
+    LinkedList myTerms;
 
     public Polynomial () {
-        myPolynomial = new LinkedList();
+        myTerms = new LinkedList();
     }
 
     /**
@@ -19,13 +18,13 @@ public class Polynomial {
      */
     public String print () {
         //Return zero if the polynomial has no terms
-        if (myPolynomial.isEmpty()) {
+        if (myTerms.isEmpty()) {
             return "0";
         }
 
         StringBuilder output = new StringBuilder();
         boolean firstTerm = true;//Track if this term is the first one, to handle special formatting
-        LinkedList.Iterator iter = myPolynomial.iterator();
+        LinkedList.Iterator iter = myTerms.iterator();
 
         while (iter.hasNext()) {
             Literal term = (Literal) iter.next();
@@ -51,13 +50,13 @@ public class Polynomial {
         int coefficient = term.getCoefficient(),
             exponent = term.getExponent();
 
-        //TODO Break this down further
         //ADDITION
         //If this term is positive and not the first term, indicate addition
         if (term.getCoefficient() > 0 && !firstTerm){
             s.insert(0, " + ");//prepend operator to the front
         }
 
+        //Special case for zero exponent
         if (exponent == 0) {
             if (coefficient > 0) {
                 s.append(coefficient);
@@ -107,7 +106,7 @@ public class Polynomial {
      */
     public Polynomial derivative () {
         Polynomial outputCopy = new Polynomial();
-        LinkedList.Iterator iter = myPolynomial.iterator();
+        LinkedList.Iterator iter = myTerms.iterator();
 
         while (iter.hasNext()) {
             Literal term = (Literal) iter.next();
@@ -130,14 +129,16 @@ public class Polynomial {
      * @return The result of the multiplication
      */
     public Polynomial times (Polynomial factor) {
+        //IMPORTANT:
+        //Running time is O(nm) where n is the number of terms in this polynomial and m is the number of terms in factor
         Polynomial outputCopy = new Polynomial();
 
-        LinkedList.Iterator iterator = myPolynomial.iterator();
+        LinkedList.Iterator iterator = myTerms.iterator();
 
         while (iterator.hasNext()) {
             //Multiply this term by each term in the factor
             Literal term = (Literal) iterator.next();
-            LinkedList.Iterator factorIterator = factor.myPolynomial.iterator();
+            LinkedList.Iterator factorIterator = factor.myTerms.iterator();
 
             while (factorIterator.hasNext()) {
                 Literal factorTerm = (Literal) factorIterator.next();
@@ -170,7 +171,7 @@ public class Polynomial {
         Stack<Literal> terms = new Stack<>();
         Polynomial outputCopy = new Polynomial();
 
-        LinkedList.Iterator iter = myPolynomial.iterator();
+        LinkedList.Iterator iter = myTerms.iterator();
 
         while (iter.hasNext()) {
             Literal term = (Literal) iter.next();
@@ -196,8 +197,8 @@ public class Polynomial {
         Polynomial outputCopy = clone();//Create the clone that will be used for output
 
         //Initialize iterators, start the out copy at the zeroth position to perform lookahead
-        LinkedList.Iterator iter = outputCopy.myPolynomial.zeroth(),
-            addendIterator = addend.myPolynomial.iterator();
+        LinkedList.Iterator iter = outputCopy.myTerms.zeroth(),
+            addendIterator = addend.myTerms.iterator();
 
         //There are no nodes in this polynomial, just return the addend
         if (iter.getNode().getNext() == null) {
@@ -226,7 +227,7 @@ public class Polynomial {
 
             //If the addend term is a higher order than the next term, insert term here, move on.
             if (addendExponent > nextExponent) {
-                outputCopy.myPolynomial.insert(addendTerm, iter);
+                outputCopy.myTerms.insert(addendTerm, iter);
                 addendTerm = safeNext(addendIterator);
             } else if (addendExponent == nextExponent) {//If they're equal, just add the literals.
                 addTermsInPlace(addendTerm, nextTerm, nextNode, outputCopy, iter);
@@ -257,7 +258,7 @@ public class Polynomial {
             nextNode.setElement(sum);
             iter.next();
         } else {//terms cancel, so remove the term and move on
-            output.myPolynomial.remove(iter);
+            output.myTerms.remove(iter);
         }
     }
 
@@ -281,11 +282,11 @@ public class Polynomial {
             return;
 
         //if the head node has no next element, just add this after head
-        LinkedList.Iterator iter = myPolynomial.zeroth();
+        LinkedList.Iterator iter = myTerms.zeroth();
         Literal newTerm = new Literal(coefficient, exponent);
 
         if (iter.getNode().getNext() == null) {
-            myPolynomial.insert(newTerm, iter);
+            myTerms.insert(newTerm, iter);
             return;
         }
 
@@ -299,7 +300,7 @@ public class Polynomial {
             Literal nextTerm = (Literal) nextNode.getElement();
 
             if (newTerm.getExponent() > nextTerm.getExponent()) {
-                myPolynomial.insert(newTerm, iter);
+                myTerms.insert(newTerm, iter);
                 return;
             } else if (newTerm.getExponent() == nextTerm.getExponent()) {
                 Literal sum = addLiterals(newTerm, nextTerm);
@@ -310,7 +311,7 @@ public class Polynomial {
             iter.next();
         }
 
-        myPolynomial.insert(newTerm, iter);
+        myTerms.insert(newTerm, iter);
     }
 
     /**
@@ -327,7 +328,7 @@ public class Polynomial {
      * Set the polynomial back to zero
      */
     public void zeroPolynomial () {
-        myPolynomial.makeEmpty();
+        myTerms.makeEmpty();
     }
 
     /**
@@ -336,7 +337,7 @@ public class Polynomial {
      */
     public Polynomial clone () {
         Polynomial clone = new Polynomial();
-        LinkedList.Iterator iter = myPolynomial.iterator();
+        LinkedList.Iterator iter = myTerms.iterator();
 
         while (iter.hasNext()) {
             Literal term = (Literal) iter.next();

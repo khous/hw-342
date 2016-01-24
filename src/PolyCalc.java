@@ -117,7 +117,12 @@ public class PolyCalc {
         assert a.negate().print().equals("-x^3 - 2x^2 - x - 3");
           //test negation
         b.zeroPolynomial();
-//        assert b.negate().equals("0");for some reason zero does not equal zero right now
+        b.insertTerm(1, 0);
+        assert b.negate().print().equals("-1");
+
+        b.zeroPolynomial();
+        b.insertTerm(1, 1);
+        assert b.negate().print().equals("-x");
 
         //test derivative
         a.zeroPolynomial();
@@ -146,6 +151,11 @@ public class PolyCalc {
         //test negate more
         //test with single literal
         //test with single term
+        b.zeroPolynomial();
+        assert a.times(b).print().equals("0");
+
+        b.insertTerm(1, 0);
+        assert a.times(b).print().equals(a.print());
 
 
         System.out.println("Done");
