@@ -58,18 +58,24 @@ public class Polynomial {
             s.insert(0, " + ");//prepend operator to the front
         }
 
+        if (exponent == 0) {
+            if (coefficient > 0) {
+                s.append(coefficient);
+            } else {
+                String sign = firstTerm ? "-" : " - ";
+                s.append(sign).append(Math.abs(coefficient));
+            }
+            return s;
+        }
+
         //COEFFICIENT positive/negative, or 1
         //Otherwise there is an exponent so add X
         if (coefficient > 1) {//Handle positive numbers greater than 1, so we don't end up with 1x
             s.append(coefficient).append(x);
         } else if (coefficient < 0) {//Handle negatives, add a negation if this is the first term, else a speced operand
-            String sign = firstTerm ? "-" : " - ";
-            s.append(sign);
-            if (coefficient < -1) {
-                s.append(Math.abs(coefficient));
-            }
+            s.append(getSignedCoefficient(coefficient, firstTerm));
             s.append(x);
-        } else if (coefficient != 0) {//Otherwise, if the coefficient is 1, just add "x"
+        } else {//Otherwise, if the coefficient is 1, just add "x"
             s.append(x);
         }
 
@@ -79,6 +85,17 @@ public class Polynomial {
             s.append("^").append(exponent);
         } else if (exponent < 0) {
             s.append("^(").append(exponent).append(")");
+        }
+
+        return s;
+    }
+
+    private StringBuilder getSignedCoefficient (int coefficient, boolean firstTerm) {
+        String sign = firstTerm ? "-" : " - ";
+        StringBuilder s = new StringBuilder();
+        s.append(sign);
+        if (coefficient < -1) {
+            s.append(Math.abs(coefficient));
         }
 
         return s;

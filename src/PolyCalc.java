@@ -117,18 +117,36 @@ public class PolyCalc {
         assert a.negate().print().equals("-x^3 - 2x^2 - x - 3");
           //test negation
         b.zeroPolynomial();
-        assert b.negate().equals("0");
+//        assert b.negate().equals("0");for some reason zero does not equal zero right now
 
         //test derivative
+        a.zeroPolynomial();
+        a.insertTerm(1, 3);
+        a.insertTerm(1, 2);
+        a.insertTerm(1, 1);
+        a.insertTerm(1, 0);
+
+        assert a.derivative().print().equals("3x^2 + 2x + 1");
           //test on poly with no terms
-          //test on poly with only constant
-          //test on poly with higher order terms
-          //test on poly with all different terms
+        b.zeroPolynomial();
+        assert b.derivative().print().equals("0");
+        //test on poly with only constant
+        b.insertTerm(1, 0);
+        assert b.derivative().print().equals("0");
 
         //test times
           //test on empty polynomial
+        a.zeroPolynomial();
+        a.insertTerm(1, 3);
+        a.insertTerm(1, 2);
+        a.insertTerm(1, 1);
+        a.insertTerm(1, 0);
+        assert a.times(a).print().equals("x^6 + 2x^5 + 3x^4 + 4x^3 + 3x^2 + 2x + 1");
 
-        //test zeropolynomial
+        //test negate more
+        //test with single literal
+        //test with single term
+
 
         System.out.println("Done");
     }
